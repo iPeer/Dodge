@@ -9,6 +9,7 @@ import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -81,12 +82,31 @@ public class Game extends Canvas {
 	private void draw(Graphics2D g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, 854,480);
+		//String t = dirX+" | "+getWidth()+" | "+dirY+" | "+getHeight();
+		String t = "BOUNCY TEXT DISCO, WOO!";
+		int strLen = g.getFontMetrics().stringWidth(t);
+		g.setColor(Color.RED);
+		if (dirY == getHeight()) {
+			moveup = false;
+		}
+		if (dirY-10 <= 0) { 
+			moveup = true;
+		}
+		dirY = moveup ? dirY + 1 : dirY -1;
+		if ((dirX + strLen) == getWidth()) {
+			moveright = false;
+		}
+		if (dirX <= 0) { 
+			moveright = true;
+		}
+		g.setColor(new Color(new Random().nextInt(255), new Random().nextInt(255), new Random().nextInt(255)));
+		dirX = moveright ? dirX + 1 : dirX -1;
+		g.drawString(t, dirX, dirY);
+		g.setColor(Color.WHITE);
+		g.drawString(FPS.getFPS()+" fps", 0, getSize().height - 2);
 		if (debugActive) {
-			g.setColor(Color.WHITE);
-			g.drawString(FPS.getFPS()+" fps", 0, getSize().height - 2);
 			g.drawString(Integer.toString(renderTime)+" ms", 2, 12);
-			g.drawString(Integer.toString(FPS.frametime), 2, 22);
-			g.drawString(Integer.toString(KeyInputHandler.getLastKey()), 2, 32);
+			g.drawString(Integer.toString(KeyInputHandler.getLastKey()), 2, 22);
 		}
 	}
 
@@ -99,5 +119,6 @@ public class Game extends Canvas {
 	private BufferStrategy bs;
 	private int endtime, starttime= 0, renderTime;
 	public static boolean debugActive = false;
-
+	static int dirX = 50, dirY = 50;
+	private boolean moveright = false, moveup = false;
 }

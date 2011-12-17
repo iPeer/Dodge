@@ -12,6 +12,18 @@ public class KeyInputHandler implements KeyListener {
 		if (lastKey == 114) {
 			Game.debugActive = !Game.debugActive;
 		}
+		if (lastKey == 39) {
+			Game.dirX++;
+		}
+		if (lastKey == 37) {
+			Game.dirX--;
+		}
+		if (lastKey == 40) {
+			Game.dirY++;
+		}
+		if (lastKey == 38) {
+			Game.dirY--;
+		}
 
 	}
 
