@@ -10,11 +10,21 @@ public class EntityPlayer extends Entity {
 	}
 	
 	public void move(long d) {
-		if ((dx > 0) && (x > game.getWidth())) {
-			return;
+		if (y <= 0) {
+			y = 0;
+			game.uppressed = false;
 		}
-		if ((dx < game.getWidth()) && (x > 0)) {
-			return;
+		if (y >= game.getHeight()-32) {
+			y = game.getHeight()-32;
+			game.downpressed = false;
+		}
+		if (x <= 0) {
+			x = 0;
+			game.leftpressed = false;
+		}
+		if (x >= game.getWidth()-32) {
+			x = game.getWidth()-32;
+			game.rightpressed = false;
 		}
 		super.move(d);
 	}
@@ -23,6 +33,10 @@ public class EntityPlayer extends Entity {
 	public void collidedWith(Entity other) {
 		if (other instanceof EntityObstacle) {
 			game.notifyDeath();
+		}
+		if (other instanceof EntityStar) {
+			game.addScore(100);
+			game.removeEntitity(other);
 		}
 	}
 

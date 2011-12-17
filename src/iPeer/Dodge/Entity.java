@@ -19,7 +19,7 @@ public abstract class Entity {
 	
 	public void move (long d) {
 		 x -= (dx) / 100;
-		 y += (d * dy) / 1000;
+		 y -= (dy) / 100;
 	}
 	
 	public void setHorizontalMovement(double dx) {

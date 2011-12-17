@@ -55,7 +55,7 @@ public class Game extends Canvas {
 
 		createBufferStrategy(2); // Accelerated graphics!
 		bs = getBufferStrategy();
-		
+
 		initEntities();
 	}
 
@@ -90,22 +90,37 @@ public class Game extends Canvas {
 		//String t = "BOUNCY TEXT DISCO, WOO!";
 		//int strLen = g.getFontMetrics().stringWidth(t);
 		g.setColor(Color.RED);
-		g.setFont(new Font(g.getFont().getName(), Font.PLAIN, 10));
+		Font defaultfont = g.getFont();
+
 		if (!paused) {
 
 			for (int i = 0; i < entities.size(); i++) {
 				Entity e = (Entity)entities.get(i);
 				e.move(tickStart);
 			}
-			
-			
+
+
 			if (runLogic) {
 				for (int e = 0;e < entities.size();e++) {
 					Entity entity = (Entity)entities.get(e);
 					entity.doLogic();
 				}
 			}
-			
+
+		}
+		player.setVerticleMovement(0);
+		player.setHorizontalMovement(0);
+		if ((uppressed) && (!downpressed)) {
+			player.setVerticleMovement(moveSpeed);
+		}
+		if ((!uppressed) && (downpressed)) {
+			player.setVerticleMovement(-moveSpeed);
+		}
+		if ((!leftpressed) && (rightpressed)) {
+			player.setHorizontalMovement(-moveSpeed);
+		}
+		if ((leftpressed) && (!rightpressed)) {
+			player.setHorizontalMovement(moveSpeed);
 		}
 		for (int i = 0; i < entities.size(); i++) {
 			Entity e = (Entity)entities.get(i);
@@ -115,7 +130,7 @@ public class Game extends Canvas {
 			for (int i = p+1; i < entities.size(); i++) {
 				Entity pl = (Entity)entities.get(p);
 				Entity ob = (Entity)entities.get(i);
-				
+
 				if (pl.collidesWith(ob) && !ignoreCollisions) {
 					pl.collidedWith(ob);
 					ob.collidedWith(pl);
@@ -124,9 +139,13 @@ public class Game extends Canvas {
 		}
 		g.setColor(Color.WHITE);
 		g.drawString(FPS.getFPS(), 0, getSize().height - 2);
+		g.setFont(new Font(g.getFont().getName(), Font.PLAIN, 20));
+		g.drawString("Score: ", (this.getWidth() - g.getFontMetrics().stringWidth("Score: "+score)) / 2, 35);
+		g.drawString(Integer.toString(score), g.getFontMetrics().stringWidth("Score: ") + (this.getWidth() - g.getFontMetrics().stringWidth("Score: "+score)) / 2, 35);
 		entities.removeAll(removeList);
 		removeList.clear();
 		if (debugActive) {
+			g.setFont(defaultfont);
 			g.drawString("R: "+Integer.toString(renderTime)+" ms K: "+KeyInputHandler.getLastKey()+" F: "+FPS.frametime, 2, 12);
 			g.drawString("E: "+entities.size()+" W: "+this.getWidth()+" H: "+this.getHeight(), 2, 22);
 			g.drawString("-- Entities --", 75, 42);
@@ -135,7 +154,7 @@ public class Game extends Canvas {
 				int x, y;
 				double xd, yd;
 				Entity e = (Entity)entities.get(i);
-				
+
 				x = e.getX();
 				y = e.getY();
 				xd = e.getHorizontalMovement();
@@ -148,68 +167,76 @@ public class Game extends Canvas {
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void initEntities() {
 		// player
-		player = new EntityPlayer(this, "sprites/player.png", 30, this.getHeight() - 50);
+		player = new EntityPlayer(this, "sprites/player.png", 30, (this.getHeight() - 32) / 2);
 		entities.add(player);
 		int safespawn = this.getWidth() + 10;
-		for (int i = 0; i < new Random().nextInt(220)+30; i++) {
-			Entity o = new EntityObstacle(this, "sprites/obstacle.png", safespawn, this.getHeight() - 50);
+		for (int i = 0; i < new Random().nextInt(250)+100; i++) {
+			if (new Random().nextInt(10) == 0 || stars < 3) {
+				Entity s = new EntityStar(this, "sprites/star.png", safespawn+new Random().nextInt(50), new Random().nextInt(this.getHeight()));
+				entities.add(s);
+				stars++;
+			}
+			Entity o = new EntityObstacle(this, "sprites/obstacle.png", safespawn, new Random().nextInt(this.getHeight()));
 			safespawn += new Random().nextInt(70)+32;
 			Debug.p(safespawn);
 			entities.add(o);
 			obstaclecount++;
 		}
 	}
-	
+
 	public void notifyDeath() {
 		paused = true;
 	}
-	
-	public void addScore() {
-		score += 10;
+
+	public void addScore(int s) {
+		score += s;
 	}
-	
+
 	public void updateLogic() {
 		runLogic = true;
 	}
-	
+
 	public void restart() {
 		entities.clear();
 		score = 0;
 		initEntities();
 		paused = false;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void removeEntitity(Entity o) {
 		removeList.add(o);
 	}
-	
-	public void obstacleIsOffscreen() {
-		obstaclecount--;
-		
-		if (obstaclecount == 0) {
-			notifyWin();
+
+	public void entityIsOffscreen(Entity en) {
+		if (en instanceof EntityObstacle) {
+			obstaclecount--;
+
+			if (obstaclecount == 0) {
+				notifyWin();
+			}
 		}
-		
+
 		for (int e = 0; e < entities.size(); e++) {		
 			Entity o = (Entity)entities.get(e);
-			o.setHorizontalMovement(o.getHorizontalMovement() * 1.06);
+			o.setHorizontalMovement(o.getHorizontalMovement() * 1.02);
 		}
-		
+		moveSpeed *= 1.02;
+
 	}
-	
+
 	public void notifyWin() {
 		paused = true;
 	}
 
 	Thread gameThread;
-	private boolean gameRunning = true, ignoreCollisions = true;;
+	private boolean gameRunning = true, ignoreCollisions = false;
 	private BufferStrategy bs;
-	private int endtime, starttime = 0, renderTime, score, obstaclecount;
+	private int endtime, starttime = 0, renderTime, score, obstaclecount, stars;
 	public static boolean debugActive = false, paused = false;
 	static int dirX = 50, dirY = 50;
 	boolean runLogic;
@@ -217,4 +244,6 @@ public class Game extends Canvas {
 	Entity player;
 	@SuppressWarnings("rawtypes")
 	private ArrayList entities = new ArrayList(), removeList = new ArrayList();
+	public boolean uppressed = false, downpressed = false, leftpressed = false, rightpressed = false;;
+	private int moveSpeed = 150;
 }

@@ -17,18 +17,6 @@ public class KeyInputHandler implements KeyListener {
 		if (lastKey == 114) {
 			Game.debugActive = !Game.debugActive;
 		}
-		if (lastKey == 39) {
-			Game.dirX++;
-		}
-		if (lastKey == 37) {
-			Game.dirX--;
-		}
-		if (lastKey == 40) {
-			Game.dirY++;
-		}
-		if (lastKey == 38) {
-			Game.dirY--;
-		}
 		if (lastKey == 80) {
 			Game.paused = !Game.paused;
 		}
@@ -39,12 +27,37 @@ public class KeyInputHandler implements KeyListener {
 			Debug.p("Exit!");
 			System.exit(0);
 		}
+		if (e.getKeyCode() == KeyEvent.VK_UP) {
+			game.uppressed = true;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_DOWN){
+			game.downpressed = true;
+		}
+		
+		if (e.getKeyCode() == KeyEvent.VK_LEFT){ 
+			game.leftpressed = true;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT){ 
+			game.rightpressed = true;
+		}
 
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		lastKey = e.getKeyCode();
+		if (e.getKeyCode() == KeyEvent.VK_UP) {
+			game.uppressed = false;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_DOWN){
+			game.downpressed = false;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_LEFT){ 
+			game.leftpressed = false;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT){ 
+			game.rightpressed = false;
+		}
 
 	}
 
