@@ -1,4 +1,4 @@
-package iPeer.Jump;
+package iPeer.Dodge;
 
 public class FPS {
 
@@ -21,10 +21,10 @@ public class FPS {
 	}
 	
 	public static String getFPS() {
-		return Short.toString(lastframes);
+		return Short.toString(lastframes)+" fps";
 	}
 	
-	public static int starttime, endtime, frametime;
+	public static int starttime, endtime, frametime, lastdraws;
 	public static short frames;
 	public static short lastframes;
 	

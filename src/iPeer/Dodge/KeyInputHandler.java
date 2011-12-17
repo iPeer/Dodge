@@ -1,14 +1,19 @@
-package iPeer.Jump;
+package iPeer.Dodge;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyInputHandler implements KeyListener {
 
+	private Game game;
+	
+	public KeyInputHandler(Game game) {
+		this.game = game;
+	}
+	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		lastKey = e.getKeyCode();
-		Debug.p("Key Pressed: "+e.getKeyCode());
 		if (lastKey == 114) {
 			Game.debugActive = !Game.debugActive;
 		}
@@ -23,6 +28,16 @@ public class KeyInputHandler implements KeyListener {
 		}
 		if (lastKey == 38) {
 			Game.dirY--;
+		}
+		if (lastKey == 80) {
+			Game.paused = !Game.paused;
+		}
+		if (lastKey == 82) {
+			game.restart();
+		}
+		if (lastKey == 81) {
+			Debug.p("Exit!");
+			System.exit(0);
 		}
 
 	}
