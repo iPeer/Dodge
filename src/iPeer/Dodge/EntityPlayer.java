@@ -14,16 +14,16 @@ public class EntityPlayer extends Entity {
 			y = 0;
 			game.uppressed = false;
 		}
-		if (y >= game.getHeight()-32) {
-			y = game.getHeight()-32;
+		if (y >= game.getHeight()-sprite.getHeight()) {
+			y = game.getHeight()-sprite.getHeight();
 			game.downpressed = false;
 		}
 		if (x <= 0) {
 			x = 0;
 			game.leftpressed = false;
 		}
-		if (x >= game.getWidth()-32) {
-			x = game.getWidth()-32;
+		if (x >= game.getWidth()-sprite.getWidth()) {
+			x = game.getWidth()-sprite.getWidth();
 			game.rightpressed = false;
 		}
 		super.move(d);
@@ -36,7 +36,7 @@ public class EntityPlayer extends Entity {
 		}
 		if (other instanceof EntityStar) {
 			game.addScore(100);
-			game.removeEntitity(other);
+			game.removeEntity(other);
 		}
 	}
 

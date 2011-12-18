@@ -17,10 +17,11 @@ public class KeyInputHandler implements KeyListener {
 		if (lastKey == 114) {
 			Game.debugActive = !Game.debugActive;
 		}
-		if (lastKey == 80) {
+		if ((lastKey == 80) && (!Game.victory) && (!Game.playerisdead)) {
 			Game.paused = !Game.paused;
+			Game.flash = 100;
 		}
-		if (lastKey == 82) {
+		if (lastKey == 82 && !game.isOnTitle) {
 			game.restart();
 		}
 		if (lastKey == 81) {
@@ -39,6 +40,12 @@ public class KeyInputHandler implements KeyListener {
 		}
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT){ 
 			game.rightpressed = true;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_M && !game.isOnTitle){ 
+			game.returnToTitle();
+		}
+		if (e.getKeyCode() == KeyEvent.VK_S && game.isOnTitle){ 
+			game.startNewGame();
 		}
 
 	}
